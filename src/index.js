@@ -19,8 +19,13 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 
 // Start server
-app.listen(environment.port, () => {
-    console.log(`Server started on port ${environment.port}`);
-});
+// app.listen(environment.port, () => {
+//     console.log(`Server started on port ${environment.port}`);
+//     if (environment.nodeEnv === 'test') {
+//         console.log(`Running in ${environment.nodeEnv} mode`);
+//     } else {
+//         console.log(`Running in ${environment.nodeEnv} mode`);
+//     }
+// });
 
 module.exports = app;

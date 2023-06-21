@@ -62,7 +62,6 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-
 const authorize = (roles = []) => {
     if (typeof roles === 'string') {
         roles = [roles];

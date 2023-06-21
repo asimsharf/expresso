@@ -70,4 +70,19 @@ const me = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    try {
+        res.cookie('jwt', '', { maxAge: 1 });
+        res.status(200).json({
+            success: true,
+            message: 'User logged out successfully',
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = { register, login, me };

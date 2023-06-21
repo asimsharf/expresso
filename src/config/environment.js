@@ -2,7 +2,9 @@ require('dotenv').config();
 
 const environment = {
     port: process.env.PORT || 3000,
-    databaseUrl: process.env.DATABASE_URL || 'mongodb://localhost/expresso2',
+    testEnvironmentVariables: process.env.TEST_PORT || 3001,
+    databaseUrl: process.env.DATABASE_URL || 'mongodb://localhost/expresso3',
+    nodeEnv: process.env.NODE_ENV || 'development',
     jwtSecret: process.env.JWT_SECRET || 'mysecretkey',
     jwtExpiration: process.env.JWT_EXPIRATION || '1d',
     jwtRefreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',

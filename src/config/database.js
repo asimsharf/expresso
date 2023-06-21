@@ -6,14 +6,23 @@ mongoose.connect(environment.databaseUrl, {
     useUnifiedTopology: true,
 });
 
-const db = mongoose.connection;
-
-db.on('connected', function () {
-    console.log(`Connected to MongoDB at ${db.host}:${db.port}`);
+mongoose.connection.on('connected', () => {
+    console.log(`Mongoose connected to ${environment.databaseUrl}`);
 });
 
-db.on('error', function (error) {
-    console.log(`Database error\n${error}`);
+mongoose.connection.on('error', (err) => {
+    console.log(`Mongoose connection error: ${err}`);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose disconnected');
+});
+
+process.on('SIGINT', () => {
+    mongoose.connection.close(() => {
+        console.log('Mongoose disconnected through app termination');
+        process.exit(0);
+    });
 });
 
 module.exports = mongoose;
