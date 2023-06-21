@@ -8,11 +8,11 @@ mongoose.connect(environment.databaseUrl, {
 
 const db = mongoose.connection;
 
-db.on('connected', function() {
+db.on('connected', function () {
     console.log(`Connected to MongoDB at ${db.host}:${db.port}`);
 });
 
-db.on('error', function(error) {
+db.on('error', function (error) {
     console.log(`Database error\n${error}`);
 });
 

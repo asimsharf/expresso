@@ -38,7 +38,7 @@ const authenticate = async (req, res, next) => {
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
                 success: false,
-                message: 'Access token is missing or invalid',
+                message: 'Access token is missing or invalid 1',
             });
         }
         const token = authHeader.split(' ')[1];
@@ -46,7 +46,7 @@ const authenticate = async (req, res, next) => {
         if (!payload) {
             return res.status(401).json({
                 success: false,
-                message: 'Access token is missing or invalid',
+                message: 'Access token is missing or invalid 2',
             });
         }
 
@@ -57,7 +57,7 @@ const authenticate = async (req, res, next) => {
     } catch (error) {
         return res.status(401).json({
             success: false,
-            message: 'Access token is missing or invalid',
+            message: 'Access token is missing or invalid 3',
         });
     }
 };
@@ -78,11 +78,4 @@ const authorize = (roles = []) => {
     };
 };
 
-
-module.exports = {
-    generateAccessToken,
-    generateRefreshToken,
-    authenticateUser,
-    authenticate,
-    authorize,
-};
+module.exports = { generateAccessToken, generateRefreshToken, authenticateUser, authenticate, authorize };
