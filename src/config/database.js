@@ -1,20 +1,19 @@
 const mongoose = require('mongoose');
-// const environment = require('./config/environment');
+const environment = require('./environment');
 
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/my_database';
-
-mongoose.connect(MONGODB_URI, {
+mongoose.connect(environment.databaseUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
 
 const db = mongoose.connection;
 
-db.on('error', (error) => {
-    console.error('MongoDB connection error:', error);
+db.on('connected', function() {
+    console.log(`Connected to MongoDB at ${db.host}:${db.port}`);
 });
 
-db.once('open', () => {
-    console.log('Connected to MongoDB');
+db.on('error', function(error) {
+    console.log(`Database error\n${error}`);
 });
+
+module.exports = mongoose;

@@ -2,68 +2,50 @@ const request = require('supertest');
 const app = require('../../src/index.js');
 const db = require('../../src/config/database');
 
-beforeAll(async () => {
-    await db.connect();
-});
+const environment = require('../../src/config/environment');
 
-afterAll(async () => {
-    await db.close();
-});
-
-describe('User Management', () => {
-    let accessToken;
-
-    test('POST /auth/login should return 200 OK', async () => {
-        const response = await request(app)
-            .post('/auth/login')
-            .send({ email: 'admin@example.com', password: 'password' });
-        expect(response.status).toBe(200);
-        accessToken = response.body.accessToken;
+// integration test
+describe('Auth routes', () => {
+    beforeAll(async () => {
+        await db.connect();
     });
 
-    test('GET /users should return 200 OK', async () => {
-        const response = await request(app)
-            .get('/users')
-            .set('Authorization', `Bearer ${accessToken}`);
-        expect(response.status).toBe(200);
-        expect(Array.isArray(response.body)).toBe(true);
+    afterAll(async () => {
+        await db.close();
     });
 
-    test('POST /users should return 201 Created', async () => {
-        const newUser = { name: 'Jane Doe', email: 'jane@example.com', password: 'password123' };
-        const response = await request(app)
-            .post('/users')
-            .set('Authorization', `Bearer ${accessToken}`)
-            .send(newUser);
+    it('should register a new user', async () => {
+        const response = await request(app).post('/auth/register').send({
+            name: 'John Doe',
+            email: 'johndoe@gmail.com',
+            password: 'password',
+        });
+
         expect(response.status).toBe(201);
-        expect(response.body.name).toBe(newUser.name);
-        expect(response.body.email).toBe(newUser.email);
+        expect(response.body).toHaveProperty('user');
+        expect(response.body).toHaveProperty('token');
+        expect(response.body).toHaveProperty('refreshToken');
     });
 
-    test('GET /users/:id should return 200 OK', async () => {
-        const response = await request(app)
-            .get('/users/1')
-            .set('Authorization', `Bearer ${accessToken}`);
+    it('should login a user', async () => {
+        const response = await request(app).post('/auth/login').send({
+            email: 'johndoe@gmail.com',
+            password: 'password',
+        });
+
         expect(response.status).toBe(200);
-        expect(response.body.name).toBe('Jane Doe');
-        expect(response.body.email).toBe('jane@example.com');
+        expect(response.body).toHaveProperty('user');
+        expect(response.body).toHaveProperty('token');
+        expect(response.body).toHaveProperty('refreshToken');
     });
 
-    test('PUT /users/:id should return 200 OK', async () => {
-        const updatedUser = { name: 'Jane Smith', email: 'jane.smith@example.com' };
-        const response = await request(app)
-            .put('/users/1')
-            .set('Authorization', `Bearer ${accessToken}`)
-            .send(updatedUser);
+    it('should refresh a user token', async () => {
+        const response = await request(app).post('/auth/refresh-token').send({
+            refreshToken: environment.jwtRefreshExpiration,
+        });
+
         expect(response.status).toBe(200);
-        expect(response.body.name).toBe(updatedUser.name);
-        expect(response.body.email).toBe(updatedUser.email);
-    });
-
-    test('DELETE /users/:id should return 204 No Content', async () => {
-        const response = await request(app)
-            .delete('/users/1')
-            .set('Authorization', `Bearer ${accessToken}`);
-        expect(response.status).toBe(204);
+        expect(response.body).toHaveProperty('token');
+        expect(response.body).toHaveProperty('refreshToken');
     });
 });

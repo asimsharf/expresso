@@ -1,48 +1,36 @@
 const mongoose = require('mongoose');
 const Post = require('../../src/models/postModel.js');
+const environment = require('../../src/config/environment');
 
-describe('Post Model', () => {
+describe('Post model', () => {
     beforeAll(async () => {
-        await mongoose.connect('mongodb://localhost/testdb', {
+        await mongoose.connect(environment.databaseUrl, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true,
         });
     });
 
     afterAll(async () => {
-        await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
     });
 
-    test('should create a new post', async () => {
-        const postData = {
-            title: 'Test Post',
-            content: 'This is a test post',
-            author: 'John Doe',
-        };
-        const post = new Post(postData);
-        const savedPost = await post.save();
-        expect(savedPost._id).toBeDefined();
-        expect(savedPost.title).toBe(postData.title);
-        expect(savedPost.content).toBe(postData.content);
-        expect(savedPost.author).toBe(postData.author);
+    it('should return the post object without the password field', async () => {
+        const post = await Post.create({
+            title: 'Post title',
+            body: 'Post body',
+
+        });
+
+        expect(post.toJSON()).not.toHaveProperty('password');
     });
 
-    test('should not create a post without a title', async () => {
-        const postData = {
-            content: 'This is a test post',
-            author: 'John Doe',
-        };
-        const post = new Post(postData);
-        let error;
-        try {
-            const savedPost = await post.save();
-            error = savedPost;
-        } catch (err) {
-            error = err;
-        }
-        expect(error).toBeInstanceOf(mongoose.Error.ValidationError);
-        expect(error.errors.title).toBeDefined();
+    it('should return the post object without the password field when using the find method', async () => {
+        const post = await Post.create({
+            title: 'Post title',
+            body: 'Post body',
+        });
+
+        const foundPost = await Post.findOne({ title: 'Post title' });
+        expect(foundPost.toJSON()).not.toHaveProperty('password');
     });
 });

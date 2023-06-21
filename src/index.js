@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const environment = require('./config/environment');
+
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 require('dotenv').config();
@@ -17,7 +19,8 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 
 // Start server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+app.listen(environment.port, () => {
+    console.log(`Server started on port ${environment.port}`);
 });
+
+module.exports = app;

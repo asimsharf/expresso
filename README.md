@@ -27,3 +27,21 @@ npm run lint
 ```bash
 npm run lint:fix
 ```
+
+
+ignore node_modules
+```
+git rm -r --cached node_modules
+git commit -m 'Remove the now ignored directory node_modules'
+git push origin master
+```
+
+add .gitignore
+```
+node_modules
+```
+
+kill address already in use 
+```
+sudo kill -9 $(sudo lsof -t -i:3000)
+```
