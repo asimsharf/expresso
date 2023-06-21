@@ -55,4 +55,3 @@ describe('User model', () => {
         expect(foundUser.toJSON()).not.toHaveProperty('password');
     });
 });
-
